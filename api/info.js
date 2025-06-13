@@ -9,8 +9,8 @@ export default async function handler(req, res) {
     const response = await fetch(`http://176.241.95.201:8092/id?unique=${unique}`, {
       method: "GET",
       headers: {
-        Authorization: "Basic " + Buffer.from("admin:241067890").toString("base64")
-      }
+        Authorization: "Basic " + Buffer.from("admin:241067890").toString("base64"),
+      },
     });
 
     if (!response.ok) {
