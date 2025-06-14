@@ -1,0 +1,43 @@
+const express = require('express');
+const fetch = require('node-fetch');
+const path = require('path');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/api/:id', async (req, res) => {
+  const id = req.params.id;
+  const apiUrl = `http://176.241.95.201:8092/id?unique=${id}`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      headers: {
+        "Authorization": "Basic " + Buffer.from("admin:241067890").toString("base64")
+      }
+    });
+
+    const data = await response.json();
+
+    // فلترة الحقول المطلوبة فقط
+    const filtered = {
+      driver_name: data.driver_name,
+      truck_number: data.truck_number,
+      container_number_export: data.container_number_export,
+      manifest: data.manifest
+    };
+
+    res.json(filtered);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
